@@ -1,2 +1,3 @@
 # matmul_cuda
-cuda matrix multiplication
+
+cuda kernel for matrix multiplication
