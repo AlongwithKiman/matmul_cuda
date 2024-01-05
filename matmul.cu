@@ -12,10 +12,12 @@
     }                                                                 \
   } while (0)
 
-
 #define TILE_SIZE 16
 #define THREAD_M 8
 #define THREAD_N 8
+#define NGPU 4
+#define DOUBLE_BUFFER_DIV 4 
+
 static __global__ void matmul_kernel(float *A, float *B, float *C, int M, int N,
                                      int K) {
   int j = blockDim.x * blockIdx.x * THREAD_N + threadIdx.x; // col
@@ -63,7 +65,7 @@ static __global__ void matmul_kernel(float *A, float *B, float *C, int M, int N,
         C[(i + tm) * N + (j + tn * TILE_SIZE)] = sum[tm][tn];
 }
 
-#define NGPU 4
+
 static int Mbegin[NGPU], Mend[NGPU];
 static int ngpu;
 static cudaStream_t streams[NGPU];
@@ -75,7 +77,7 @@ static float *A_gpu2[NGPU], *C_gpu2[NGPU];
 // B : K * N
 // C : M * N
 
-#define DOUBLE_BUFFER_DIV 4 
+
 
 void matmul(const float *A, const float *B, float *C, int M, int N, int K) {
 
